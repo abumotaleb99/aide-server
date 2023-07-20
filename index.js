@@ -45,6 +45,25 @@ async function run() {
       const result = await productCollection.find().toArray();
       res.send(result);
     });
+
+    app.get("/total-products", async (req, res) => {
+      const result = await productCollection.estimatedDocumentCount();
+      res.send({ totalProducts: result });
+    });
+
+    app.get("/products", async (req, res) => {
+      console.log(req.query);
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = page * limit;
+
+      const result = await productCollection
+        .find()
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+      res.send(result);
+    });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
