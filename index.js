@@ -25,6 +25,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     const userCollection = client.db("AIDE").collection("users");
+    const productCollection = client.db("AIDE").collection("products");
 
     app.get("/users/:email", async (req, res) => {
       const email = req.params.email;
@@ -32,6 +33,12 @@ async function run() {
       const query = { email: email };
       const user = await userCollection.findOne(query);
       res.send(user);
+    });
+
+    app.post("/add-new-product", async (req, res) => {
+      const newProduct = req.body;
+      const result = await productCollection.insertOne(newProduct);
+      res.send(result);
     });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
